@@ -15,8 +15,8 @@ dbConnection();
 
 const app = express();
 
-app.use(cors());
-app.options("*", cors());
+app.use(cors({ origin: "*" }));
+
 
 // compress all responses
 app.use(compression());
