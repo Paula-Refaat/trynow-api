@@ -1,5 +1,5 @@
 const { check } = require("express-validator");
-
+const User = require('../../models/userModel')
 const validatorMiddleware = require("../../middlewares/validatorMiddleware");
 
 exports.signupValidator = [
@@ -8,12 +8,19 @@ exports.signupValidator = [
     .withMessage("User Required")
     .isLength({ min: 3 })
     .withMessage("Too short user name"),
-  check("email")
+    check("email")
     .notEmpty()
     .withMessage("email Required")
     .isEmail()
     .withMessage("invalid email address")
-    .toLowerCase(),
+    .toLowerCase()
+    .custom((val) =>
+      User.findOne({ email: val }).then((email) => {
+        if (email) {
+          throw new Error("E-mail already registered befor");
+        }
+      })
+    ),
   validatorMiddleware,
 ];
 

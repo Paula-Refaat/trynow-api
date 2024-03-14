@@ -34,7 +34,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 });
 
 exports.getUsers = asyncHandler(async (req, res, next) => {
-  const users = await User.find({});
+  const users = await User.find({role: "user"});
   res.status(200).json({ data: users });
 });
 
