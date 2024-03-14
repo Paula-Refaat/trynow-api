@@ -17,7 +17,7 @@ exports.signupValidator = [
     .custom((val) =>
       User.findOne({ email: val }).then((email) => {
         if (email) {
-          throw new Error("E-mail already registered befor");
+          throw new Error("E-mail already registered before");
         }
       })
     ),
