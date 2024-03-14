@@ -1,7 +1,8 @@
 const express = require("express");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
-
+const cors = require("cors");
+const compression = require("compression");
 dotenv.config({ path: "config.env" });
 
 const dbConnection = require("./config/database");
@@ -13,6 +14,12 @@ const authRoute = require("./routes/authRoute");
 dbConnection();
 
 const app = express();
+
+app.use(cors());
+app.options("*", cors());
+
+// compress all responses
+app.use(compression());
 
 app.use(express.json());
 
