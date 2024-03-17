@@ -1,5 +1,4 @@
 const asyncHandler = require("express-async-handler");
-const bcrypt = require("bcryptjs");
 
 const ApiError = require("../utils/ApiError");
 const UserAuthorization = require("../utils/UserAuthorization");
@@ -34,7 +33,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 });
 
 exports.getUsers = asyncHandler(async (req, res, next) => {
-  const users = await User.find({role: "user"});
+  const users = await User.find({ role: "user" });
   res.status(200).json({ data: users });
 });
 
@@ -60,3 +59,29 @@ exports.allowTo = (...roles) =>
     }
     next();
   });
+
+exports.deleteUser = asyncHandler(async (req, res, next) => {
+  const user = await User.findByIdAndDelete(req.params.id);
+
+  if (!user) {
+    return next(new ApiError(`No user found with id ${req.params.id}`, 404));
+  }
+  res.status(204).json();
+});
+
+exports.updateLoggedUserPassword = asyncHandler(async (req, res, next) => {
+  //update user password passed on user payload (req.user._id)
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      password: req.body.newPassword,
+    },
+    {
+      new: true,
+    }
+  );
+  //genrate token
+  const token = createToken(req.user._id);
+
+  res.status(200).json({ data: user, token });
+});
